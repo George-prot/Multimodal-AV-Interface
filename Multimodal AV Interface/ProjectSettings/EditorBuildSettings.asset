@@ -18,6 +18,8 @@ EditorBuildSettings:
     path: Assets/_Scenes/MainScene-eyecontact.unity
     guid: 5a5db2ef16249e74fa25202c42a824bb
   m_configObjects:
+    Unity.XR.OpenVR.Settings: {fileID: 11400000, guid: 6ac51b6dff33a804ea420ab4fb4452a4,
+      type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: eeca026b259dea64f8ebc580da70810e,
       type: 2}
     com.unity.xr.openxr.settings4: {fileID: 11400000, guid: 7e2725573c88b284ea3db531a0b3021a,

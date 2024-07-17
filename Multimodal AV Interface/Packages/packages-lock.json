@@ -17,7 +17,7 @@
       "hash": "f7f501c076f27a12a2cbb2fa1235a106ce7b16e3"
     },
     "com.tobii.xr.sdk": {
-      "version": "file:C:/Users/SURREAL TEAM/Downloads/TobiiXRSDK_3.0.1.179",
+      "version": "file:C:/Users/Surreal/Desktop/George git/TobiiXRSDK_3.0.1.179",
       "depth": 0,
       "source": "local",
       "dependencies": {
@@ -277,6 +277,16 @@
         "com.unity.inputsystem": "1.4.4"
       },
       "url": "https://packages.unity.com"
+    },
+    "com.valvesoftware.unity.openvr": {
+      "version": "file:C:/Users/Surreal/Downloads/com.valvesoftware.unity.openvr-1.1.4.tgz",
+      "depth": 0,
+      "source": "local-tarball",
+      "dependencies": {
+        "com.unity.xr.management": "3.2.13",
+        "com.unity.ugui": "1.0.0",
+        "com.unity.xr.legacyinputhelpers": "2.1.4"
+      }
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",
