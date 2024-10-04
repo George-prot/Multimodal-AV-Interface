@@ -25,9 +25,10 @@ namespace Tobii.XR {
         {
             //eyeTrackingPoint = Instantiate(recentCallPrefab, callPosition1.transform, worldPositionStays: false);
             Vector3 dir = TobiiXR.GetEyeTrackingData(TobiiXR_TrackingSpace.World).GazeRay.Direction + UI.transform.position;
-            dir.z -= 0.2f;
-            dir.x -= 0.1f;
-            dir.y -= 0.03f;
+            dir.z -= 0.3f;
+            if (dir.x > 0.25) dir.x = (dir.x * 0.6f);
+            //dir.x -= 0.1f;
+            //dir.y -= 0.03f;
 
             //TobiiXR.GetEyeTrackingData(TobiiXR_EyeTrackingData).
 

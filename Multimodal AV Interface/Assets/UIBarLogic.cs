@@ -242,10 +242,10 @@ public class UIBarLogic : MonoBehaviour
     {
         if (sendMsg) {
 
-            yield return new WaitForSeconds(5f);
+            yield return new WaitForSeconds(40f);
             sendMessage = false;
             messageReceived = true;
-            messageNotificationName.GetComponent<TextMeshProUGUI>().text = "markos";
+            messageNotificationName.GetComponent<TextMeshProUGUI>().text = "Peter";
             messageNotificationContext.GetComponent<TextMeshProUGUI>().text = "Hello! How are you?";
 
         }
@@ -262,7 +262,7 @@ public class UIBarLogic : MonoBehaviour
             endCallUpperCanvasButton.SetActive(true);
             if (callingLabel.activeSelf) callingLabel.SetActive(false);
             incomingCall.SetActive(true);
-            callerName.GetComponent<TextMeshProUGUI>().text = "Anna";
+            callerName.GetComponent<TextMeshProUGUI>().text = "Peter";
             printer.IncomingPhoneCall(callerName);
 
         }

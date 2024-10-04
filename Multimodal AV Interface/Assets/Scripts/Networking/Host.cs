@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Tobii.XR.Examples;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -17,6 +18,8 @@ public class Host : NetworkSystem
     WorldLogger _fixedTimeLogger;
     HMIManager _hmiManager;
     VisualSyncManager _visualSyncManager;
+    MetricEvaluationScript evalScript;
+    //Helper helper;
 
     List<int> _playerRoles = new List<int>();
     bool[] _playerReadyStatus = new bool[UNetConfig.MaxPlayers];
@@ -26,6 +29,7 @@ public class Host : NetworkSystem
 
     TrafficLightsSystem _lights;
     InstantStartHostParameters _instantStartParams;
+    public bool evalOn=false;
 
     public Host(LevelManager levelManager, PlayerSystem playerSys, AICarSyncSystem aiCarSystem, WorldLogger logger, WorldLogger fixedLogger, InstantStartHostParameters instantStartParams)
     {
@@ -125,7 +129,7 @@ public class Host : NetworkSystem
                             if (role != -1) {
                                 experimentRoleDefinition = _lvlManager.ActiveExperiment.Roles[role];
                                 if (experimentRoleDefinition.AutonomousPath != null) {
-                                    Debug.Log("MPIKA AUTONOMOUS PATH");
+                                    //Debug.Log("MPIKA AUTONOMOUS PATH");
                                     _playerSys.ActivatePlayerAICar();
                                 }
                                 roleName = experimentRoleDefinition.Name;
@@ -282,8 +286,9 @@ public class Host : NetworkSystem
         //PrepareSimulatiion();
         if (!_instantStartParams.SkipSelectionScreen)
         {
-            GUILayout.Label($"Host mode: {_currentState}");
-            GUILayout.Label("Connected: " + _host.NumRemotePlayers);
+            //GUILayout.Label($"Host mode: {_currentState}");
+            //GUILayout.Label("Connected: " + _host.NumRemotePlayers);
+            GUILayout.Label("Default Simulation: ");
         } else
         {
             _selectedExperiment = _instantStartParams.SelectedExperiment;
@@ -319,18 +324,27 @@ public class Host : NetworkSystem
                         else
                         {
                             //GUI.enabled = AllRolesSelected();
-                            if (GUILayout.Button("Start Game"))
+                            if (GUILayout.Button("Start Simulation"))
                             {
                                 PrepareSimulatiion();
                             }
                             GUI.enabled = true;
-                            GUILayout.Label("Experiment:");
-                            for (int i = 0; i < _lvlManager.Experiments.Length; i++)
+                            GUILayout.Label("Evaluation Experiment: ");
+                            //swsto alla den xreiazetai
+                            /*for (int i = 0; i < _lvlManager.Experiments.Length; i++)
                             {
                                 if (GUILayout.Button(_lvlManager.Experiments[i].Name + (i == _selectedExperiment ? " <--" : "")))
                                 {
                                     _selectedExperiment = i;
                                 }
+                            }*/
+                            if (GUILayout.Button("Start Experiment"))
+                            {
+                                //evalScript.experimentOn = true;
+                                PrepareSimulatiion();
+                                evalOn = true;
+                                /*evalScript = GameObject.Find("UI").GetComponent<UIPrinter>().eval;
+                                evalScript.experimentOn = true;*/
                             }
                             PlayerRolesGUI();
                             _playerSys.SelectModeGUI();

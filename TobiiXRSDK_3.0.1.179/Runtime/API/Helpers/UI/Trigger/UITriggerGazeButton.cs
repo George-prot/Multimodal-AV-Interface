@@ -52,7 +52,7 @@ namespace Tobii.XR
         private Transform oldButtonCords;
         private Transform newButtonCords;
         private GazeTriggerHelper helper;
-        Boolean blinker = true;
+        //Boolean blinker = true;
         /*public Boolean eyeBlinkBool = true;
         public Boolean eyeDwellTimeBool = false;*/
         public GameObject uiComp;
@@ -250,6 +250,7 @@ namespace Tobii.XR
             /// Implements eye pinch selection technique
             /// </summary>
             //uiComp.GetComponent<UITriggerGazeButton>().eyeBlinkBool
+            //Debug.Log((TobiiXR.GetEyeTrackingData(TobiiXR_TrackingSpace.World).IsLeftEyeBlinking));
             if (blinkScript.eyeBlinkBool && currBtnState == ButtonState.Focused && (TobiiXR.GetEyeTrackingData(TobiiXR_TrackingSpace.World).IsLeftEyeBlinking || TobiiXR.GetEyeTrackingData(TobiiXR_TrackingSpace.World).IsRightEyeBlinking)) {
 
                 thisButton = this.gameObject.GetComponent<Button>();

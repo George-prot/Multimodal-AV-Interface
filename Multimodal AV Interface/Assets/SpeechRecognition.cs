@@ -59,6 +59,10 @@ namespace SpeechRec {
         public bool spRecIsOff = false;
         public AudioSource eventsAudio;
         public GameObject openMenuCanvas;
+        public bool outgoingCallBool = false;
+        public GameObject helpCanvas;
+        public MetricEvaluationScript eval;
+        Host host;
 
         // Start is called before the first frame update
         void Start()
@@ -81,6 +85,9 @@ namespace SpeechRec {
             keywordActions.Add("voice commands off", VoiceCommandsOff);
             keywordActions.Add("screen on", ScreenOn);
             keywordActions.Add("screen off", ScreenOff);
+            keywordActions.Add("help", HelpCanvas);
+            keywordActions.Add("close help", CloseHelp);
+            contactList.Add("Peter");
             //keywordCallRecognizer = new KeywordRecognizer(keywordCallActions.Keys.ToArray());
             //
             //dictationRecognizer.Start();
@@ -100,8 +107,8 @@ namespace SpeechRec {
             dictationRecognizer.DictationResult += OnDictationResult;
             dictationRecognizer.DictationComplete += OnDictationComplete;
             dictationRecognizer.DictationError += OnDictationError;
-            Debug.Log("SPEECH STATUS "+keywordRecognizer.IsRunning);
-            Debug.Log("SPEECH LIST " + keywordActions.Keys.Count);
+            //Debug.Log("SPEECH STATUS "+keywordRecognizer.IsRunning);
+            //Debug.Log("SPEECH LIST " + keywordActions.Keys.Count);
 
 
         }
@@ -137,6 +144,7 @@ namespace SpeechRec {
             keywordActions[args.text].Invoke();*/
             if (keywordActions.ContainsKey(recognizedPhrase) && voiceCommandsBool)
             {
+                if(recognizedPhrase=="call") outgoingCallBool = true;
                 keywordActions[recognizedPhrase].Invoke();
             }
             else
@@ -148,11 +156,11 @@ namespace SpeechRec {
 
         public void StartDict()
         {
-            Debug.Log("Mpika start dictation");
+            //Debug.Log("Mpika start dictation");
             // Stop keyword recognizer to avoid conflicts
             if (keywordRecognizer.IsRunning)
             {
-                Debug.Log("Mpika stop");
+                //Debug.Log("Mpika stop");
                 keywordRecognizer.Stop();
                 //keywordRecognizer.Dispose();
             }
@@ -172,12 +180,12 @@ namespace SpeechRec {
         public System.Collections.IEnumerator StartDictationRecognizer()
         {
             // Wait until the PhraseRecognitionSystem has completely shut down
-            Debug.Log("PRRIIIIIIIIIIIIIIIN");
+            //Debug.Log("PRRIIIIIIIIIIIIIIIN");
             //spRecIsOff = false;
             yield return new WaitUntil(() => PhraseRecognitionSystem.Status == SpeechSystemStatus.Stopped);
 
             //spRecIsOff = true;
-            Debug.Log("METAAAAAAAAAAAAAAAAAAAAAAA");
+            //Debug.Log("METAAAAAAAAAAAAAAAAAAAAAAA");
             spRecIsOff = false;
             // Start dictation recognizer
             dictationRecognizer.Start();
@@ -191,7 +199,7 @@ namespace SpeechRec {
 
             if (contactTextInput.activeSelf) {
 
-                Debug.Log("MPIKA CONTACT ADDDDDDDDDDDDDDDDDDD");
+                //Debug.Log("MPIKA CONTACT ADDDDDDDDDDDDDDDDDDD");
                 contactTextInput.GetComponent<TMP_InputField>().ActivateInputField();
                 contactTextInput.GetComponent<TMP_InputField>().Select();
                 contactTextInput.GetComponent<TMP_InputField>().text = dictatedPhrase.ToString();
@@ -201,7 +209,7 @@ namespace SpeechRec {
 
             if (newMessageCanvas.activeSelf)
             {
-                Debug.Log("MPIKA NEW MESSAAAAGEEEEEEEEEEEEEEEE");
+                //Debug.Log("MPIKA NEW MESSAAAAGEEEEEEEEEEEEEEEE");
                 newMessageTextInput.GetComponent<TMP_InputField>().ActivateInputField();
                 newMessageTextInput.GetComponent<TMP_InputField>().Select();
                 newMessageTextInput.GetComponent<TMP_InputField>().text = dictatedPhrase.ToString();
@@ -212,15 +220,16 @@ namespace SpeechRec {
                 string contactName = recognizedPhrase.Substring("call".Length).Trim();
                 Debug.Log("Extracted Contact Name: " + contactName);
 */
-            if (contactList.Contains(dictatedPhrase))
-                {
-                    MakePhoneCall(dictatedPhrase);
-                    RestartKeywordRecognizer();
-                }
-                else
-                {
-                    Debug.Log($"Contact '{dictatedPhrase}' does not exist in contacts.");
-                }
+            if (contactList.Contains(dictatedPhrase) && outgoingCallBool==true)
+            {
+                outgoingCallBool = false;
+                MakePhoneCall(dictatedPhrase);
+                RestartKeywordRecognizer();
+            }
+            else
+            {
+                Debug.Log($"Contact '{dictatedPhrase}' does not exist in contacts.");
+            }
             //}
 
             /*// Restart keyword recognizer
@@ -260,11 +269,11 @@ namespace SpeechRec {
 
         public void RestartKeywordRecognizer()
         {
-            Debug.Log("MPIKA EDWWWWWWWWW");
+            //Debug.Log("MPIKA EDWWWWWWWWW");
             //if (!keywordRecognizer.IsRunning) //previous....working!
             if (dictationRecognizer.Status.Equals(SpeechSystemStatus.Running))
             {
-                Debug.Log("MPIKA EDWWWWWWWWW111111111111111111");
+                //Debug.Log("MPIKA EDWWWWWWWWW111111111111111111");
     
                     OnDisable();
                 // Start the PhraseRecognitionSystem
@@ -273,14 +282,14 @@ namespace SpeechRec {
 
         private System.Collections.IEnumerator StartKeywordRecognizer()
         {
-            Debug.Log("Keyword recognizer restarted11111111111111.");
+            //Debug.Log("Keyword recognizer restarted11111111111111.");
             // Wait until the PhraseRecognitionSystem has completely started
             yield return new WaitUntil(() => PhraseRecognitionSystem.Status == SpeechSystemStatus.Running);
 
-            Debug.Log("Keyword recognizer restarted2222222222222222.");
+            //Debug.Log("Keyword recognizer restarted2222222222222222.");
             // Start the keyword recognizer
             keywordRecognizer.Start();
-            Debug.Log("Keyword recognizer restarted3333333333333333.");
+            //Debug.Log("Keyword recognizer restarted3333333333333333.");
         }
 
         private void OnDisable()
@@ -288,7 +297,7 @@ namespace SpeechRec {
             // Stop and dispose both recognizers when the object is disabled
             if (keywordRecognizer != null && keywordRecognizer.IsRunning)
             {
-                Debug.Log("mpika speechRec stop");
+                //Debug.Log("mpika speechRec stop");
                 keywordRecognizer.Stop();
                 StartCoroutine(StopSpeechRecognition());
                 //keywordRecognizer.Dispose();
@@ -296,7 +305,7 @@ namespace SpeechRec {
 
             if (dictationRecognizer != null && dictationRecognizer.Status.Equals(SpeechSystemStatus.Running))
             {
-                Debug.Log("mpika dictation stop");
+                //Debug.Log("mpika dictation stop");
                 dictationRecognizer.Stop();
                 StartCoroutine(StopDictation());
                 //dictationRecognizer.Dispose();
@@ -311,11 +320,11 @@ namespace SpeechRec {
 
         private System.Collections.IEnumerator StopDictation()
         {
-            Debug.Log("mpika dictation stop!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            //Debug.Log("mpika dictation stop!!!!!!!!!!!!!!!!!!!!!!!!!!");
             yield return new WaitUntil(() => dictationRecognizer.Status.Equals(SpeechSystemStatus.Stopped));
-            Debug.Log("mpika dictation stop%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+            //Debug.Log("mpika dictation stop%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
             PhraseRecognitionSystem.Restart();
-            Debug.Log("MPIKA EDWWWWWWWWW222222222222222222222");
+            //Debug.Log("MPIKA EDWWWWWWWWW222222222222222222222");
             StartCoroutine(StartKeywordRecognizer());
         }
 
@@ -335,7 +344,7 @@ namespace SpeechRec {
         }
 
         public void BlinkOn() {
-            Debug.Log("mpika blink on");
+            //Debug.Log("mpika blink on");
             blinkScript.eyeBlinkBool = true;
             blinkOnBtn.SetActive(false);
             blinkOffBtn.SetActive(true);
@@ -343,7 +352,7 @@ namespace SpeechRec {
 
         public void BlinkOff()
         {
-            Debug.Log("mpika blink off");
+            //Debug.Log("mpika blink off");
             blinkScript.eyeBlinkBool = false;
             blinkOnBtn.SetActive(true);
             blinkOffBtn.SetActive(false);
@@ -351,15 +360,26 @@ namespace SpeechRec {
 
         public void DwellOn()
         {
-            Debug.Log("mpika dwell on");
+            //Debug.Log("mpika dwell on");
             blinkScript.eyeDwellTimeBool = true;
             dwellOnBtn.SetActive(false);
             dwellOffBtn.SetActive(true);
+
+            if (!eval.dwellEvalDone && eval.experimentOn)
+            {
+                eval.msgEval = false;
+                eval.carEval = false;
+                eval.musicEval = false;
+                if (!eval.messageEvalHelper1.activeSelf) eval.messageEvalHelper1.SetActive(true);
+                if (!eval.messageEvalHelper2.activeSelf) eval.messageEvalHelper2.SetActive(true);
+                if (!eval.messageEvalHelper3.activeSelf) eval.messageEvalHelper3.SetActive(true);
+                if (!eval.messageEvalHelper4.activeSelf) eval.messageEvalHelper4.SetActive(true);
+            }
         }
 
         public void DwellOff()
         {
-            Debug.Log("mpika dwell off");
+            //Debug.Log("mpika dwell off");
             blinkScript.eyeDwellTimeBool = false;
             dwellOnBtn.SetActive(true);
             dwellOffBtn.SetActive(false);
@@ -367,7 +387,7 @@ namespace SpeechRec {
 
         public void VoiceCommandsOn()
         {
-            Debug.Log("mpika voice on");
+            //Debug.Log("mpika voice on");
             voiceCommandsBool = true;
             voiceOnBtn.SetActive(false);
             voiceOffBtn.SetActive(true);
@@ -375,7 +395,7 @@ namespace SpeechRec {
 
         public void VoiceCommandsOff()
         {
-            Debug.Log("mpika voice off");
+            //Debug.Log("mpika voice off");
             voiceCommandsBool = false;
             voiceOnBtn.SetActive(true);
             voiceOffBtn.SetActive(false);
@@ -592,6 +612,18 @@ namespace SpeechRec {
             }
 
         }
+
+        private void HelpCanvas() {
+
+            if (!helpCanvas.activeSelf) helpCanvas.SetActive(true);
+        }
+
+        private void CloseHelp()
+        {
+            if (helpCanvas.activeSelf) helpCanvas.SetActive(false);
+        }
+
+
 
         /*private void PreviousTrackTry()
         {

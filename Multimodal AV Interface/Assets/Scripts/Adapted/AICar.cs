@@ -348,11 +348,11 @@ public class AICar : MonoBehaviour, IVehicle
                 {
                     StartCoroutine(barLogic.PopUpMessages("left"));
                 }
-                else if (other.transform.name == "Waypoint 012") //slight left
+                else if (other.transform.name == "Waypoint 012" || other.transform.name == "Waypoint 23" || other.transform.name == "Waypoint 32") //slight left
                 {
                     StartCoroutine(barLogic.PopUpMessages("slight left"));
                 }
-                else if (other.transform.name == "Waypoint 007") //breaking
+                else if (other.transform.name == "Waypoint 007" || other.transform.name == "Waypoint 019" || other.transform.name == "Waypoint 30"||other.transform.name == "Waypoint 39") //breaking
                 {
                     StartCoroutine(barLogic.PopUpMessages("breaking"));
                 }

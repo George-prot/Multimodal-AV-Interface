@@ -166,8 +166,8 @@ public class PlayerSystem : MonoBehaviour
     //displays controler selection GUI
     public void SelectModeGUI()
     {
-
-            GUILayout.Label($"Mode: {PlayerInputMode}");
+            //correct but not needed
+            /*GUILayout.Label($"Mode: {PlayerInputMode}");
             if (GUILayout.Button("Suite mode"))
             {
                 PlayerInputMode = InputMode.Suite;
@@ -179,7 +179,7 @@ public class PlayerSystem : MonoBehaviour
             if (GUILayout.Button("Keyboard mode"))
             {
                 PlayerInputMode = InputMode.Flat;
-            }
+            }*/
     }
 
     public void SelectMode(InputMode inputMode)

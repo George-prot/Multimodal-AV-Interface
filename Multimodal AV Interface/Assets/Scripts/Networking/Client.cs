@@ -70,7 +70,7 @@ public class Client : NetworkSystem
         lights?.RegisterHandlers(_msgDispatcher);
         ExperimentRoleDefinition experimentRoleDefinition = _lvlManager.ActiveExperiment.Roles[_roles[_client.MyPlayerId]];
         if (experimentRoleDefinition.AutonomousPath != null) {
-            Debug.Log("MPIKA CLIENT AUTO PATH");
+            //Debug.Log("MPIKA CLIENT AUTO PATH");
             _playerSys.ActivatePlayerAICar();
         }
         _currentState = NetState.InGame;

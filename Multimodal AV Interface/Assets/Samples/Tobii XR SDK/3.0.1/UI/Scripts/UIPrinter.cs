@@ -131,6 +131,11 @@ namespace Tobii.XR.Examples
         public GameObject unreadMessageSign;
         public GameObject unreadInboxMessageSign;
         public Color afterFocus = new Color32(255, 255, 255, 200);
+        public GameObject chooseReceiver;
+        public MetricEvaluationScript eval;
+        public GameObject messageEvaluationHelper;
+        public GameObject inboxMessageSprite;
+        public GameObject outboxMessageSprite;
         //public Double temperatureDouble;
 
 
@@ -146,47 +151,51 @@ namespace Tobii.XR.Examples
         //public float time;
         //public Boolean maintenanceBoolean = false;
         //findUI = GameObject.Find("UI").GetComponent<UIPrinter>();
-
+        private GameObject UIObject;
+        private string UIspeedText;
+        //private string speedToConvert;
 
         private void Update()
         {
-            if (GameObject.Find("UI").GetComponent<UIPrinter>().inboxPosition1.GetComponent<UIPrinter>().positionsChild.activeSelf)
+            if (UIObject.GetComponent<UIPrinter>().inboxPosition1.GetComponent<UIPrinter>().positionsChild.activeSelf)
             {
                 //findUI.noInboxMessagesAvailable.SetActive(false);
-                GameObject.Find("UI").GetComponent<UIPrinter>().noInboxMessagesAvailable.SetActive(false);
+                UIObject.GetComponent<UIPrinter>().noInboxMessagesAvailable.SetActive(false);
             }
-            else { GameObject.Find("UI").GetComponent<UIPrinter>().noInboxMessagesAvailable.SetActive(true); }
+            else { UIObject.GetComponent<UIPrinter>().noInboxMessagesAvailable.SetActive(true); }
 
-            if (GameObject.Find("UI").GetComponent<UIPrinter>().outboxPosition1.GetComponent<UIPrinter>().positionsChild.activeSelf)
+            if (UIObject.GetComponent<UIPrinter>().outboxPosition1.GetComponent<UIPrinter>().positionsChild.activeSelf)
             {
-                GameObject.Find("UI").GetComponent<UIPrinter>().noOutboxMessagesAvailable.SetActive(false);
+                UIObject.GetComponent<UIPrinter>().noOutboxMessagesAvailable.SetActive(false);
             }
-            else { GameObject.Find("UI").GetComponent<UIPrinter>().noOutboxMessagesAvailable.SetActive(true); }
+            else { UIObject.GetComponent<UIPrinter>().noOutboxMessagesAvailable.SetActive(true); }
 
-            if (GameObject.Find("UI").GetComponent<UIPrinter>().position1.GetComponent<UIPrinter>().positionsChild.activeSelf)
+            if (UIObject.GetComponent<UIPrinter>().position1.GetComponent<UIPrinter>().positionsChild.activeSelf)
             {
-                GameObject.Find("UI").GetComponent<UIPrinter>().noContactsAvailable.SetActive(false);
+                UIObject.GetComponent<UIPrinter>().noContactsAvailable.SetActive(false);
             }
-            else { GameObject.Find("UI").GetComponent<UIPrinter>().noContactsAvailable.SetActive(true); }
+            else { UIObject.GetComponent<UIPrinter>().noContactsAvailable.SetActive(true); }
 
-            if (GameObject.Find("UI").GetComponent<UIPrinter>().callPosition1.GetComponent<UIPrinter>().positionsChild.activeSelf)
+            if (UIObject.GetComponent<UIPrinter>().callPosition1.GetComponent<UIPrinter>().positionsChild.activeSelf)
             {
-                GameObject.Find("UI").GetComponent<UIPrinter>().noRecentCallsAvailable.SetActive(false);
+                UIObject.GetComponent<UIPrinter>().noRecentCallsAvailable.SetActive(false);
             }
-            else { GameObject.Find("UI").GetComponent<UIPrinter>().noRecentCallsAvailable.SetActive(true); }
+            else { UIObject.GetComponent<UIPrinter>().noRecentCallsAvailable.SetActive(true); }
 
             //Debug.Log(speedometer.speedometerText.ToString());
 
-            GameObject.Find("UI").GetComponent<UIPrinter>().speedText.GetComponent<TextMeshProUGUI>().text = (Convert.ToInt32(GameObject.Find("UI").GetComponent<UIPrinter>().speed.text)*1.6).ToString();
+            GameObject.Find("UI").GetComponent<UIPrinter>().speedText.GetComponent<TextMeshProUGUI>().text = Math.Truncate(Convert.ToInt32(GameObject.Find("UI").GetComponent<UIPrinter>().speed.text) *1.6).ToString();
         }
 
 
         void Start()
         {
-
+            UIObject = GameObject.Find("UI");
+            UIspeedText = GameObject.Find("UI").GetComponent<UIPrinter>().speedText.GetComponent<TextMeshProUGUI>().text;
+            //speedToConvert = ;
             volumeUp = true;
             volumeDown = true;
-            contactsCanvas = GameObject.Find("UI").GetComponent<UIPrinter>().contactsCanvas;
+            contactsCanvas = UIObject.GetComponent<UIPrinter>().contactsCanvas;
             blinkScript = GameObject.Find("UI").GetComponent<BlinkCoroutine>();
         }
         /*
@@ -251,6 +260,16 @@ namespace Tobii.XR.Examples
                 dwellTimeOff.SetActive(true);
                 dwellTimeOn.GetComponent<Button>().GetComponent<Image>().color = afterFocus;
                 dwellTimeOn.SetActive(false);
+                if (!eval.dwellEvalDone && eval.experimentOn)
+                {
+                    eval.msgEval = false;
+                    eval.carEval = false;
+                    eval.musicEval = false;
+                    if (!eval.messageEvalHelper1.activeSelf) eval.messageEvalHelper1.SetActive(true);
+                    if (!eval.messageEvalHelper2.activeSelf) eval.messageEvalHelper2.SetActive(true);
+                    if (!eval.messageEvalHelper3.activeSelf) eval.messageEvalHelper3.SetActive(true);
+                    if (!eval.messageEvalHelper4.activeSelf) eval.messageEvalHelper4.SetActive(true);
+                }
             }
         }
 
@@ -322,14 +341,14 @@ namespace Tobii.XR.Examples
 
         public void OpenMessageCanvas()
         {
-            if (GameObject.Find("UI").GetComponent<UIPrinter>().inboxCanvas.activeSelf && !this.GetComponent<MessageRead>().messageIsRead) {
+            if (UIObject.GetComponent<UIPrinter>().inboxCanvas.activeSelf && !this.GetComponent<MessageRead>().messageIsRead) {
                 this.GetComponent<MessageRead>().messageIsRead = true;
                 //this.GetComponent<MessageRead>().unreadSign.SetActive(false);
                 barLogic.unreadInboxCounter -= 1;
                 if (unreadMessageSign.activeSelf) unreadMessageSign.SetActive(false);
                 if (this.GetComponent<OutboxMessage>().unreadInboxMessageSign.activeSelf) this.GetComponent<OutboxMessage>().unreadInboxMessageSign.SetActive(false);
             }
-            GameObject.Find("UI").GetComponent<UIPrinter>().exitOpenMessageButton.GetComponent<UIPrinter>().openedMessage = GameObject.Find("Sprite Mask - Open Message");
+            UIObject.GetComponent<UIPrinter>().exitOpenMessageButton.GetComponent<UIPrinter>().openedMessage = GameObject.Find("Sprite Mask - Open Message");
             if (noContactsWarning.activeSelf) noContactsWarning.SetActive(false);
             if (messageCanvas.activeSelf) messageCanvas.SetActive(false);
             if (!openMessageCanvas.activeSelf) openMessageCanvas.SetActive(true);
@@ -355,9 +374,11 @@ namespace Tobii.XR.Examples
                 foreach (string s in spRec.contactList)
                 {
                     GameObject newContact;
+                    if(!chooseReceiver.activeSelf) chooseReceiver.SetActive(true);
                     if (forwardPosition1.GetComponent<UIPrinter>().positionsChild == null)
                     {
                         newContact = Instantiate(receiverOptionPrefab, forwardPosition1.transform, worldPositionStays: false);
+                        if (!eval.messageEval && !eval.experimentOn) newContact.GetComponent<UIPrinter>().messageEvaluationHelper.SetActive(false);
                         forwardPosition1.GetComponent<UIPrinter>().positionsChild = newContact;
                         //Debug.Log("listaaaaaaa: " + s);
                         //Debug.Log("gameobjectttttt: " + newContact.GetComponent<ReceiverName>().receiverName.GetComponent<TextMeshProUGUI>().text);
@@ -370,7 +391,8 @@ namespace Tobii.XR.Examples
                         newContact.GetComponent<UIPrinter>().forwardPosition3 = GameObject.Find("Button 8 - Exit Open Canvas").GetComponent<UIPrinter>().forwardPosition3;
                         newContact.GetComponent<UITriggerGazeButton>().uiComp = GameObject.Find("Button 8 - Exit Open Canvas").GetComponent<UITriggerGazeButton>().uiComp;
                         newContact.GetComponent<UIPrinter>().spRec = GameObject.Find("Button 8 - Exit Open Canvas").GetComponent<UIPrinter>().spRec;
-
+                        newContact.GetComponent<UIPrinter>().sendMessageButton = GameObject.Find("Button 8 - Exit Open Canvas").GetComponent<UIPrinter>().sendMessageButton;
+                        newContact.GetComponent<UIPrinter>().chooseReceiver = GameObject.Find("Button 8 - Exit Open Canvas").GetComponent<UIPrinter>().chooseReceiver;
                     }
                     else if (forwardPosition1.GetComponent<UIPrinter>().positionsChild != null && forwardPosition2.GetComponent<UIPrinter>().positionsChild == null)
                     {
@@ -387,6 +409,8 @@ namespace Tobii.XR.Examples
                         newContact.GetComponent<UIPrinter>().forwardPosition3 = GameObject.Find("Button 8 - Exit Open Canvas").GetComponent<UIPrinter>().forwardPosition3;
                         newContact.GetComponent<UITriggerGazeButton>().uiComp = GameObject.Find("Button 8 - Exit Open Canvas").GetComponent<UITriggerGazeButton>().uiComp;
                         newContact.GetComponent<UIPrinter>().spRec = GameObject.Find("Button 8 - Exit Open Canvas").GetComponent<UIPrinter>().spRec;
+                        newContact.GetComponent<UIPrinter>().sendMessageButton = GameObject.Find("Button 8 - Exit Open Canvas").GetComponent<UIPrinter>().sendMessageButton;
+                        newContact.GetComponent<UIPrinter>().chooseReceiver = GameObject.Find("Button 8 - Exit Open Canvas").GetComponent<UIPrinter>().chooseReceiver;
 
                     }
                     else if (forwardPosition1.GetComponent<UIPrinter>().positionsChild != null && forwardPosition2.GetComponent<UIPrinter>().positionsChild != null && forwardPosition3.GetComponent<UIPrinter>().positionsChild == null)
@@ -405,6 +429,8 @@ namespace Tobii.XR.Examples
                         newContact.GetComponent<UIPrinter>().forwardPosition3 = GameObject.Find("Button 8 - Exit Open Canvas").GetComponent<UIPrinter>().forwardPosition3;
                         newContact.GetComponent<UITriggerGazeButton>().uiComp = GameObject.Find("Button 8 - Exit Open Canvas").GetComponent<UITriggerGazeButton>().uiComp;
                         newContact.GetComponent<UIPrinter>().spRec = GameObject.Find("Button 8 - Exit Open Canvas").GetComponent<UIPrinter>().spRec;
+                        newContact.GetComponent<UIPrinter>().sendMessageButton = GameObject.Find("Button 8 - Exit Open Canvas").GetComponent<UIPrinter>().sendMessageButton;
+                        newContact.GetComponent<UIPrinter>().chooseReceiver = GameObject.Find("Button 8 - Exit Open Canvas").GetComponent<UIPrinter>().chooseReceiver;
 
                     }
                 }
@@ -428,6 +454,7 @@ namespace Tobii.XR.Examples
             if (forwardPosition1.GetComponent<UIPrinter>().positionsChild != null) Destroy(forwardPosition1.GetComponent<UIPrinter>().positionsChild.gameObject);
             if (forwardPosition2.GetComponent<UIPrinter>().positionsChild != null) Destroy(forwardPosition2.GetComponent<UIPrinter>().positionsChild.gameObject);
             if (forwardPosition3.GetComponent<UIPrinter>().positionsChild != null) Destroy(forwardPosition3.GetComponent<UIPrinter>().positionsChild.gameObject);
+            if (chooseReceiver.activeSelf) chooseReceiver.SetActive(false);
 
 
             if (spRec.keywordRecognizer.IsRunning)
@@ -772,7 +799,7 @@ namespace Tobii.XR.Examples
             sendNewForwardMessage.GetComponent<OutboxMessage>().openButton.GetComponent<UIPrinter>().sendMessageButton = sendMessageButton.GetComponent<UIPrinter>().sendMessageButton;
             sendNewForwardMessage.GetComponent<OutboxMessage>().openButton.GetComponent<UIPrinter>().noContactsWarning = sendMessageButton.GetComponent<UIPrinter>().noContactsWarning;
             sendNewForwardMessage.GetComponent<OutboxMessage>().openButton.GetComponent<UITriggerGazeButton>().uiComp = sendMessageButton.GetComponent<UITriggerGazeButton>().uiComp;
-
+            if(eval.msgEval) eval.StopMessageTimer();
             if (openMessageCanvas.activeSelf) openMessageCanvas.SetActive(false);
             if (inboxCanvas.activeSelf) inboxCanvas.SetActive(false);
             if (!outboxCanvas.activeSelf) outboxCanvas.SetActive(true);
@@ -780,6 +807,7 @@ namespace Tobii.XR.Examples
             if (!this.GetComponent<OutboxMessage>().openButton.activeSelf) this.GetComponent<OutboxMessage>().openButton.SetActive(true);
             messageSprites.inboxSpriteOn.SetActive(false);
             messageSprites.outboxSpriteOn.SetActive(true);
+            this.gameObject.SetActive(false);
             /*sendNewMessage.GetComponent<OutboxMessage>().openButton.GetComponent<UIPrinter>().openMessageCanvas = GameObject.Find("Canvas - Outbox").GetComponent<UIPrinter>().openMessageCanvas;
             sendNewMessage.GetComponent<OutboxMessage>().openButton.GetComponent<UIPrinter>().messageCanvas = GameObject.Find("Canvas - Outbox").GetComponent<UIPrinter>().messageCanvas;*/
             //chosenReceiver.GetComponentInChildren<TextMeshProUGUI>().text = null;
@@ -815,6 +843,7 @@ namespace Tobii.XR.Examples
                 sendNewMessage.GetComponent<OutboxMessage>().openButton.GetComponent<UIPrinter>().contactPrefab = sendNewMessage;
                 sendNewMessage.GetComponent<OutboxMessage>().receiverName.text = chosenReceiver.GetComponentInChildren<TextMeshProUGUI>().text;
                 sendNewMessage.GetComponent<OutboxMessage>().messageContent.text = messageTextInput.GetComponent<TMP_InputField>().text;
+                messageTextInput.GetComponent<TMP_InputField>().text = "";
                 messageTextInput.GetComponent<TMP_InputField>().DeactivateInputField();
                 //newOpenButton.GetComponent<UIPrinter>().messageCanvas = sendMessageButton.GetComponent<UIPrinter>().messageCanvas;
                 //sendNewMessage.GetComponent<OutboxMessage>().openButton.GetComponent<UIPrinter>().noContactsWarning = sendMessageButton.GetComponent<UIPrinter>().noContactsWarning;
@@ -823,8 +852,8 @@ namespace Tobii.XR.Examples
                 sendNewMessage.GetComponent<OutboxMessage>().openButton.GetComponent<UIPrinter>().messageCanvas = sendMessageButton.GetComponent<UIPrinter>().messageCanvas;
                 sendNewMessage.GetComponent<OutboxMessage>().openButton.GetComponent<UIPrinter>().sendMessageButton = sendMessageButton.GetComponent<UIPrinter>().sendMessageButton;
                 sendNewMessage.GetComponent<OutboxMessage>().openButton.GetComponent<UIPrinter>().noContactsWarning = sendMessageButton.GetComponent<UIPrinter>().noContactsWarning;
-                sendNewMessage.GetComponent<OutboxMessage>().openButton.GetComponent<UITriggerGazeButton>().uiComp = GameObject.Find("UI").GetComponent<UIPrinter>().uiComponent;
-                sendNewMessage.GetComponent<OutboxMessage>().openButton.GetComponent<UIPrinter>().unreadMessageSign = GameObject.Find("UI").GetComponent<UIPrinter>().unreadMessageSign;
+                sendNewMessage.GetComponent<OutboxMessage>().openButton.GetComponent<UITriggerGazeButton>().uiComp = UIObject.GetComponent<UIPrinter>().uiComponent;
+                sendNewMessage.GetComponent<OutboxMessage>().openButton.GetComponent<UIPrinter>().unreadMessageSign = UIObject.GetComponent<UIPrinter>().unreadMessageSign;
                 //Debug.Log("METAAAAAAAAAAAAAAA");
                 uiComponent.GetComponent<AudioEvents>().audioEvents.PlayOneShot(uiComponent.GetComponent<AudioEvents>().messageSent);
                 chosenReceiver.GetComponentInChildren<TextMeshProUGUI>().text = null;
@@ -897,7 +926,7 @@ namespace Tobii.XR.Examples
             newIncomingMessage.GetComponent<OutboxMessage>().receiverName.text = sender.GetComponent<TextMeshProUGUI>().text;
             newIncomingMessage.GetComponent<OutboxMessage>().messageContent.text = context.GetComponent<TextMeshProUGUI>().text;
             //messageTextInput.GetComponent<TMP_InputField>().DeactivateInputField();
-            newIncomingMessage.GetComponent<OutboxMessage>().openButton.GetComponent<UIPrinter>().barLogic = GameObject.Find("UI").GetComponent<UIPrinter>().barLogic;
+            newIncomingMessage.GetComponent<OutboxMessage>().openButton.GetComponent<UIPrinter>().barLogic = UIObject.GetComponent<UIPrinter>().barLogic;
             newIncomingMessage.GetComponent<OutboxMessage>().openButton.GetComponent<UIPrinter>().contactPrefab = newIncomingMessage;
             //newIncomingMessage.GetComponent<MessageRead>().unreadSign.SetActive(true);
 
@@ -945,8 +974,23 @@ namespace Tobii.XR.Examples
                 originalCanvas.SetActive(false);
                 buttonCanvas.SetActive(true);
                 AnimationReset(buttonCanvas);
-                if (buttonCanvas == messageCanvas) {
+                if (buttonCanvas == messageCanvas && !eval.msgEval) {
+                    if(outboxCanvas.activeSelf) outboxCanvas.SetActive(false);
+                    if (!inboxCanvas.activeSelf) inboxCanvas.SetActive(true);
+                    if (outboxMessageSprite.activeSelf) outboxMessageSprite.SetActive(false);
+                    if (!inboxMessageSprite.activeSelf) inboxMessageSprite.SetActive(true);
+                    eval.StartMessageTimer();
                     if (newMessageCanvas.activeSelf) newMessageButton.GetComponent<UIPrinter>().OpenNewMessageCanvas();
+                }else if (buttonCanvas == eval.musicCanvas && !eval.musicEval)
+                {
+
+                    eval.StartMusicTimer();
+                }
+                else if (buttonCanvas == eval.carCanvas && !eval.carEval)
+                {
+                    if(maintenanceUI.activeSelf) maintenanceUI.SetActive(false);
+                    if(!enginePresetsContent.activeSelf) enginePresetsContent.SetActive(true);
+                    eval.StartCarTimer();
                 }
             }
             //btnTrigger.timeElapsed = 0f;
@@ -1035,13 +1079,13 @@ namespace Tobii.XR.Examples
                 audioSource.clip = this.audioClip;
                 audioSource.Play();
                 toolBarTrackPlaying.text = trackPlaying.text;
-                Debug.Log("paizei: " + toolBarTrackPlaying.text);
+                //Debug.Log("paizei: " + toolBarTrackPlaying.text);
             }
             else if (audioSource.isPlaying && audioSource.clip != this.audioClip) {
                 audioSource.clip = this.audioClip;
                 audioSource.Play();
                 toolBarTrackPlaying.text = trackPlaying.text;
-                Debug.Log("paizei: " + toolBarTrackPlaying.text);
+                //Debug.Log("paizei: " + toolBarTrackPlaying.text);
             }
             if (audioSource.isPlaying) {
                 onButton.gameObject.SetActive(false);
@@ -1052,7 +1096,7 @@ namespace Tobii.XR.Examples
 
         public void VolumeUp()
         {
-            Debug.Log("mpika volumeeeeeeeeeeee UPPPPPPPPPPP");
+            //Debug.Log("mpika volumeeeeeeeeeeee UPPPPPPPPPPP");
             if (audioSource != null)
             {
                 //Debug.Log("Volume prin: " + audioSource.volume);
@@ -1078,7 +1122,7 @@ namespace Tobii.XR.Examples
 
         public void VolumeDown()
         {
-            Debug.Log("mpika volumeeeeeeeeeeee DOOWWWWWNNNNNNNNNNN");
+            //Debug.Log("mpika volumeeeeeeeeeeee DOOWWWWWNNNNNNNNNNN");
             if (audioSource != null)
             {
                 //Debug.Log("Volume prin: " + audioSource.volume);
@@ -1140,7 +1184,7 @@ namespace Tobii.XR.Examples
             temp -= 2;
             //temp = Math.Truncate((temp) * 10);
             temperature.GetComponent<TextMeshProUGUI>().text = temp.ToString();
-            Debug.Log("thermokrasia: " + temp.ToString());
+            //Debug.Log("thermokrasia: " + temp.ToString());
             volumeDown = false;
             yield return new WaitForSeconds(1f);
             volumeDown = true;
@@ -1216,7 +1260,7 @@ namespace Tobii.XR.Examples
         }
 
         public void Mute() {
-            Debug.Log("MPIKA MUTE");
+            //Debug.Log("MPIKA MUTE");
             if (audioSource.mute)
             {
                 audioSource.mute = false;
@@ -1229,6 +1273,7 @@ namespace Tobii.XR.Examples
                 unMutedImage.SetActive(false);
                 mutedImage.SetActive(true);
             }
+            if(eval.musicEval) eval.StopMusicTimer();
             //audioSource.mute = !audioSource.mute;
         }
 
@@ -1307,7 +1352,7 @@ namespace Tobii.XR.Examples
             /*time = Time.deltaTime;
             maintenanceBoolean = true;*/
 
-
+            if(eval.carEval) eval.StopCarTimer();
             StartCoroutine(ButtonCoroutine());
 
 
@@ -1419,12 +1464,12 @@ namespace Tobii.XR.Examples
         }
 
         public void IncomingPhoneCall(GameObject callName) {
-            callingLabelCallCanvas = GameObject.Find("UI").GetComponent<UIPrinter>().callingLabelCallCanvas;
-            incomingLabelCallCanvas = GameObject.Find("UI").GetComponent<UIPrinter>().incomingLabelCallCanvas;
+            callingLabelCallCanvas = UIObject.GetComponent<UIPrinter>().callingLabelCallCanvas;
+            incomingLabelCallCanvas = UIObject.GetComponent<UIPrinter>().incomingLabelCallCanvas;
             if (callingLabelCallCanvas.activeSelf) callingLabelCallCanvas.SetActive(false);
             if (!incomingLabelCallCanvas.activeSelf) incomingLabelCallCanvas.SetActive(true);
-            recentCallPrefab = GameObject.Find("UI").GetComponent<UIPrinter>().recentCallPrefab;
-            phoneCallCanvas = GameObject.Find("UI").GetComponent<UIPrinter>().phoneCallCanvas;
+            recentCallPrefab = UIObject.GetComponent<UIPrinter>().recentCallPrefab;
+            phoneCallCanvas = UIObject.GetComponent<UIPrinter>().phoneCallCanvas;
             if (phoneCallCanvas.activeSelf == false)
             {
                 phoneCallCanvas.SetActive(true);
@@ -1458,31 +1503,31 @@ namespace Tobii.XR.Examples
                 newCall = Instantiate(recentCallPrefab, callPosition1.transform, worldPositionStays: false);
                 //newCall.GetComponent<ContactsType>().callBtn.GetComponent<UIPrinter>().recentCallsCanvas = GameObject.Find("Canvas - Recent Calls");
                 //newCall.GetComponent<ContactsType>().callBtn.GetComponent<UIPrinter>().contactsCanvas = GameObject.Find("Canvas - Contacts");
-                newCall.GetComponent<ContactsType>().callBtn.GetComponent<UIPrinter>().recentCallsCanvas = GameObject.Find("UI").GetComponent<UIPrinter>().recentCallsCanvas;
-                newCall.GetComponent<ContactsType>().callBtn.GetComponent<UIPrinter>().contactsCanvas = GameObject.Find("UI").GetComponent<UIPrinter>().contactsCanvas;
-                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().contactsCanvas = GameObject.Find("UI").GetComponent<UIPrinter>().contactsCanvas;
+                newCall.GetComponent<ContactsType>().callBtn.GetComponent<UIPrinter>().recentCallsCanvas = UIObject.GetComponent<UIPrinter>().recentCallsCanvas;
+                newCall.GetComponent<ContactsType>().callBtn.GetComponent<UIPrinter>().contactsCanvas = UIObject.GetComponent<UIPrinter>().contactsCanvas;
+                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().contactsCanvas = UIObject.GetComponent<UIPrinter>().contactsCanvas;
                 newCall.GetComponent<ContactsType>().contactName.text = callName.GetComponent<TextMeshProUGUI>().text;
 
-                newCall.GetComponent<ContactsType>().callBtn.GetComponent<UIPrinter>().callPosition1 = GameObject.Find("UI").GetComponent<UIPrinter>().callPosition1;
-                newCall.GetComponent<ContactsType>().callBtn.GetComponent<UIPrinter>().callPosition2 = GameObject.Find("UI").GetComponent<UIPrinter>().callPosition2;
-                newCall.GetComponent<ContactsType>().callBtn.GetComponent<UIPrinter>().callPosition3 = GameObject.Find("UI").GetComponent<UIPrinter>().callPosition3;
-                newCall.GetComponent<ContactsType>().callBtn.GetComponent<UIPrinter>().callPosition4 = GameObject.Find("UI").GetComponent<UIPrinter>().callPosition4;
-                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().chosenReceiver = GameObject.Find("UI").GetComponent<UIPrinter>().chosenReceiver;
-                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().newMessageButton = GameObject.Find("UI").GetComponent<UIPrinter>().newMessageButton;
-                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().phoneCallCanvas = GameObject.Find("UI").GetComponent<UIPrinter>().phoneCallCanvas;
-                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().contactsCanvas = GameObject.Find("UI").GetComponent<UIPrinter>().contactsCanvas;
-                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().messageCanvas = GameObject.Find("UI").GetComponent<UIPrinter>().messageCanvas;
-                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().inboxCanvas = GameObject.Find("UI").GetComponent<UIPrinter>().inboxCanvas;
-                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().outboxCanvas = GameObject.Find("UI").GetComponent<UIPrinter>().outboxCanvas;
-                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().newMessageCanvas = GameObject.Find("UI").GetComponent<UIPrinter>().newMessageCanvas;
-                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().sendMessageButton = GameObject.Find("UI").GetComponent<UIPrinter>().sendMessageButton;
-                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().recentCallsCanvas = GameObject.Find("UI").GetComponent<UIPrinter>().recentCallsCanvas;
-                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().messageTextInput = GameObject.Find("UI").GetComponent<UIPrinter>().messageTextInput;
-                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().phoneCanvas = GameObject.Find("UI").GetComponent<UIPrinter>().phoneCanvas;
-                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().noContactsWarning = GameObject.Find("UI").GetComponent<UIPrinter>().noContactsWarning;
-                newCall.GetComponent<ContactsType>().callBtn.GetComponent<UIPrinter>().spRec = GameObject.Find("UI").GetComponent<UIPrinter>().spRec;
+                newCall.GetComponent<ContactsType>().callBtn.GetComponent<UIPrinter>().callPosition1 = UIObject.GetComponent<UIPrinter>().callPosition1;
+                newCall.GetComponent<ContactsType>().callBtn.GetComponent<UIPrinter>().callPosition2 = UIObject.GetComponent<UIPrinter>().callPosition2;
+                newCall.GetComponent<ContactsType>().callBtn.GetComponent<UIPrinter>().callPosition3 = UIObject.GetComponent<UIPrinter>().callPosition3;
+                newCall.GetComponent<ContactsType>().callBtn.GetComponent<UIPrinter>().callPosition4 = UIObject.GetComponent<UIPrinter>().callPosition4;
+                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().chosenReceiver = UIObject.GetComponent<UIPrinter>().chosenReceiver;
+                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().newMessageButton = UIObject.GetComponent<UIPrinter>().newMessageButton;
+                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().phoneCallCanvas = UIObject.GetComponent<UIPrinter>().phoneCallCanvas;
+                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().contactsCanvas = UIObject.GetComponent<UIPrinter>().contactsCanvas;
+                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().messageCanvas = UIObject.GetComponent<UIPrinter>().messageCanvas;
+                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().inboxCanvas = UIObject.GetComponent<UIPrinter>().inboxCanvas;
+                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().outboxCanvas = UIObject.GetComponent<UIPrinter>().outboxCanvas;
+                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().newMessageCanvas = UIObject.GetComponent<UIPrinter>().newMessageCanvas;
+                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().sendMessageButton = UIObject.GetComponent<UIPrinter>().sendMessageButton;
+                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().recentCallsCanvas = UIObject.GetComponent<UIPrinter>().recentCallsCanvas;
+                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().messageTextInput = UIObject.GetComponent<UIPrinter>().messageTextInput;
+                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().phoneCanvas = UIObject.GetComponent<UIPrinter>().phoneCanvas;
+                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().noContactsWarning = UIObject.GetComponent<UIPrinter>().noContactsWarning;
+                newCall.GetComponent<ContactsType>().callBtn.GetComponent<UIPrinter>().spRec = UIObject.GetComponent<UIPrinter>().spRec;
                 newCall.GetComponent<ContactsType>().callBtn.GetComponent<UIPrinter>().uiComponent = GameObject.Find("UI");
-                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().spRec = GameObject.Find("UI").GetComponent<UIPrinter>().spRec;
+                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().spRec = UIObject.GetComponent<UIPrinter>().spRec;
                 newCall.GetComponent<ContactsType>().callBtn.GetComponent<UITriggerGazeButton>().uiComp = GameObject.Find("UI");
                 newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UITriggerGazeButton>().uiComp = GameObject.Find("UI");
                 
@@ -1493,8 +1538,8 @@ namespace Tobii.XR.Examples
 
         public void MakePhoneCall()
         {
-            callingLabelCallCanvas = GameObject.Find("UI").GetComponent<UIPrinter>().callingLabelCallCanvas;
-            incomingLabelCallCanvas = GameObject.Find("UI").GetComponent<UIPrinter>().incomingLabelCallCanvas;
+            callingLabelCallCanvas = UIObject.GetComponent<UIPrinter>().callingLabelCallCanvas;
+            incomingLabelCallCanvas = UIObject.GetComponent<UIPrinter>().incomingLabelCallCanvas;
             if (!callingLabelCallCanvas.activeSelf) callingLabelCallCanvas.SetActive(true);
             if (incomingLabelCallCanvas.activeSelf) incomingLabelCallCanvas.SetActive(false);
 
@@ -1554,28 +1599,28 @@ namespace Tobii.XR.Examples
                 newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().contactsCanvas = this.GetComponent<UIPrinter>().contactsCanvas;
                 newCall.GetComponent<ContactsType>().contactName.text = this.GetComponent<ContactsType>().contactName.text;
 
-                newCall.GetComponent<ContactsType>().callBtn.GetComponent<UIPrinter>().callPosition1 = GameObject.Find("UI").GetComponent<UIPrinter>().callPosition1;
-                newCall.GetComponent<ContactsType>().callBtn.GetComponent<UIPrinter>().callPosition2 = GameObject.Find("UI").GetComponent<UIPrinter>().callPosition2;
-                newCall.GetComponent<ContactsType>().callBtn.GetComponent<UIPrinter>().callPosition3 = GameObject.Find("UI").GetComponent<UIPrinter>().callPosition3;
-                newCall.GetComponent<ContactsType>().callBtn.GetComponent<UIPrinter>().callPosition4 = GameObject.Find("UI").GetComponent<UIPrinter>().callPosition4;
-                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().chosenReceiver = GameObject.Find("UI").GetComponent<UIPrinter>().chosenReceiver;
-                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().newMessageButton = GameObject.Find("UI").GetComponent<UIPrinter>().newMessageButton;
-                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().phoneCallCanvas = GameObject.Find("UI").GetComponent<UIPrinter>().phoneCallCanvas;
-                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().contactsCanvas = GameObject.Find("UI").GetComponent<UIPrinter>().contactsCanvas;
-                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().messageCanvas = GameObject.Find("UI").GetComponent<UIPrinter>().messageCanvas;
-                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().inboxCanvas = GameObject.Find("UI").GetComponent<UIPrinter>().inboxCanvas;
-                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().outboxCanvas = GameObject.Find("UI").GetComponent<UIPrinter>().outboxCanvas;
-                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().newMessageCanvas = GameObject.Find("UI").GetComponent<UIPrinter>().newMessageCanvas;
-                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().sendMessageButton = GameObject.Find("UI").GetComponent<UIPrinter>().sendMessageButton;
-                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().recentCallsCanvas = GameObject.Find("UI").GetComponent<UIPrinter>().recentCallsCanvas;
-                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().messageTextInput = GameObject.Find("UI").GetComponent<UIPrinter>().messageTextInput;
-                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().phoneCanvas = GameObject.Find("UI").GetComponent<UIPrinter>().phoneCanvas;
-                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().noContactsWarning = GameObject.Find("UI").GetComponent<UIPrinter>().noContactsWarning;
-                newCall.GetComponent<ContactsType>().callBtn.GetComponent<UIPrinter>().spRec = GameObject.Find("UI").GetComponent<UIPrinter>().spRec;
+                newCall.GetComponent<ContactsType>().callBtn.GetComponent<UIPrinter>().callPosition1 = UIObject.GetComponent<UIPrinter>().callPosition1;
+                newCall.GetComponent<ContactsType>().callBtn.GetComponent<UIPrinter>().callPosition2 = UIObject.GetComponent<UIPrinter>().callPosition2;
+                newCall.GetComponent<ContactsType>().callBtn.GetComponent<UIPrinter>().callPosition3 = UIObject.GetComponent<UIPrinter>().callPosition3;
+                newCall.GetComponent<ContactsType>().callBtn.GetComponent<UIPrinter>().callPosition4 = UIObject.GetComponent<UIPrinter>().callPosition4;
+                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().chosenReceiver = UIObject.GetComponent<UIPrinter>().chosenReceiver;
+                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().newMessageButton = UIObject.GetComponent<UIPrinter>().newMessageButton;
+                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().phoneCallCanvas = UIObject.GetComponent<UIPrinter>().phoneCallCanvas;
+                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().contactsCanvas = UIObject.GetComponent<UIPrinter>().contactsCanvas;
+                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().messageCanvas = UIObject.GetComponent<UIPrinter>().messageCanvas;
+                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().inboxCanvas = UIObject.GetComponent<UIPrinter>().inboxCanvas;
+                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().outboxCanvas = UIObject.GetComponent<UIPrinter>().outboxCanvas;
+                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().newMessageCanvas = UIObject.GetComponent<UIPrinter>().newMessageCanvas;
+                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().sendMessageButton = UIObject.GetComponent<UIPrinter>().sendMessageButton;
+                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().recentCallsCanvas = UIObject.GetComponent<UIPrinter>().recentCallsCanvas;
+                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().messageTextInput = UIObject.GetComponent<UIPrinter>().messageTextInput;
+                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().phoneCanvas = UIObject.GetComponent<UIPrinter>().phoneCanvas;
+                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().noContactsWarning = UIObject.GetComponent<UIPrinter>().noContactsWarning;
+                newCall.GetComponent<ContactsType>().callBtn.GetComponent<UIPrinter>().spRec = UIObject.GetComponent<UIPrinter>().spRec;
                 newCall.GetComponent<ContactsType>().callBtn.GetComponent<UITriggerGazeButton>().uiComp = GameObject.Find("UI");
                 newCall.GetComponent<ContactsType>().callBtn.GetComponent<UIPrinter>().uiComponent = GameObject.Find("UI");
                 newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UITriggerGazeButton>().uiComp = GameObject.Find("UI");
-                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().spRec = GameObject.Find("UI").GetComponent<UIPrinter>().spRec;
+                newCall.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().spRec = UIObject.GetComponent<UIPrinter>().spRec;
                 //newCall.GetComponent<ContactsType>().delBtn.GetComponent<UITriggerGazeButton>().uiComp = GameObject.Find("UI");
                 
                 callPosition1.GetComponent<UIPrinter>().positionsChild = newCall;
@@ -1757,6 +1802,10 @@ namespace Tobii.XR.Examples
             newContact.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().addContactButton = GameObject.Find("Button 34").GetComponent<UIPrinter>().addContactButton;
             newContact.GetComponent<ContactsType>().delBtn.GetComponent<UIPrinter>().contactName = GameObject.Find("Button 34").GetComponent<UIPrinter>().contactName;
             newContact.GetComponent<ContactsType>().delBtn.GetComponent<UIPrinter>().saveContactButton = GameObject.Find("Button 34");
+            newContact.GetComponent<ContactsType>().delBtn.GetComponent<UIPrinter>().position1 = GameObject.Find("Canvas - Contacts").GetComponent<UIPrinter>().position1;
+            newContact.GetComponent<ContactsType>().delBtn.GetComponent<UIPrinter>().position2 = GameObject.Find("Canvas - Contacts").GetComponent<UIPrinter>().position2;
+            newContact.GetComponent<ContactsType>().delBtn.GetComponent<UIPrinter>().position3 = GameObject.Find("Canvas - Contacts").GetComponent<UIPrinter>().position3;
+            newContact.GetComponent<ContactsType>().delBtn.GetComponent<UIPrinter>().contactPrefab = newContact;
             newContact.GetComponent<ContactsType>().delBtn.GetComponent<UIPrinter>().addContactButton = GameObject.Find("Button 34").GetComponent<UIPrinter>().addContactButton;
             newContact.GetComponent<ContactsType>().delBtn.GetComponent<UIPrinter>().spRec = GameObject.Find("Button 34").GetComponent<UIPrinter>().spRec;
             newContact.GetComponent<ContactsType>().msgBtn.GetComponent<UIPrinter>().chosenReceiver = GameObject.Find("Button 34").GetComponent<UIPrinter>().chosenReceiver;
